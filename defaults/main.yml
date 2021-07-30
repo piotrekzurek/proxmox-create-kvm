@@ -5,13 +5,15 @@
 ### Proxmox API connection and authentication section ###
 #########################################################
 
-# Various module options used to have default values. This cause problems when user expects different behavior from proxmox by default or fill
-# options which cause problems when they have been set. The default value is compatibility, which will ensure that the default values are used
-# when the values are not explicitly specified by the user. From community.general 4.0.0 on, the default value will switch to no_defaults.
-# To avoid deprecation warnings, please set proxmox_default_behavior to an explicit value. This affects the acpi, autostart, balloon, boot,
-# cores, cpu, cpuunits, force, format, kvm, memory, onboot, ostype, sockets, tablet, template, vga, options.
-# See: https://docs.ansible.com/ansible/latest/collections/community/general/proxmox_kvm_module.html#parameter-proxmox_default_behavior
-pve_lxc_proxmox_default_behavior: compatibility
+# Flag to determine the behavior of the variables default values
+  # Various module options used to have default values. This cause problems when user expects different behavior from proxmox by default or fill
+  # options which cause problems when they have been set. The default value is "compatibility", which will ensure that the default values are used
+  # when the values are not explicitly specified by the user. From community.general 4.0.0 on, the default value will switch to "no_defaults".
+  # To avoid deprecation warnings, please set proxmox_default_behavior to an explicit value. This affects the acpi, autostart, balloon, boot,
+  # cores, cpu, cpuunits, force, format, kvm, memory, onboot, ostype, sockets, tablet, template, vga, options.
+  # See: https://docs.ansible.com/ansible/latest/collections/community/general/proxmox_kvm_module.html#parameter-proxmox_default_behavior
+  # Choices: compatibility - no_defaults
+pve_default_behavior: compatibility
 
 # Proxmox node hostname where we create or manage a KVM
 pve_node: mynode
@@ -28,10 +30,10 @@ pve_api_password: PaSsWd_f0r-AuToMaTi0nS    # Optional if token authentication i
 # pve_api_token_secret: 0b029a23-1ca3-a93f-8d90-5a4c9d064199      # Optional if user-password based authentication is used
 
 # Validate the node's certificates when creating the virtual machine
-pve_lxc_validate_certs: no    # Optional.
+# pve_validate_certs: no    # Optional.
 
 # Timeout (in seconds) for operations, both clone and create. (Cloning can take a while)
-pve_kvm_timeout: 500
+# pve_kvm_timeout: 500
 
 
 #####################################################
@@ -42,15 +44,15 @@ pve_kvm_timeout: 500
 # so we set the variable to the hostname. You can arbitrarly define this hostname
 pve_hostname: "{{ inventory_hostname.split('.')[0] }}"
 
-pve_kvm_start_after_create: false # Turn on the VM once created. Whether created from scratch or cloned
+pve_kvm_started_after_provision: false # It will ensure that the VM is turned on when provisioning finishes
 
 # FALSE: create a new VM  -  TRUE: clone an existing VM
 pve_kvm_clone_from_existing: false
 
 # If yes, the VM will be updated with new value. Cause of the operations of the API and security reasons, the update of the
-# following parameters was disabled: net, virtio, ide, sata, scsi. Per example updating net update the MAC address and virtio
+# following parameters was disabled: net, virtio, ide, sata, scsi. For example updating net update the MAC address and virtio
 # create always new disk. Update of pool is disabled. It needs an additional API endpoint not covered by this module.
-pve_kvm_update: no
+# pve_kvm_update: no
 
 
 #####################################################
@@ -62,23 +64,7 @@ pve_kvm_update: no
 
 # Create a full copy of all disk. This is always done when you clone a normal VM. For VM templates, we try to create a linked clone by default.
 # FALSE: linked clone  -  TRUE: full clone ## See https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm/issues/2
-pve_kvm_clone_full: true
-
-# Name of VM to be cloned. If vmid is setted, pve_kvm_clone_vm can take arbitrary value but required for initiating the clone.
-pve_kvm_clone_vm: DebianBusterTemplate
-
-# The name of the snapshot to clone (Don't use/define it at the same time as pve_kvm_clone_vm)
-# pve_kvm_clone_snapname: DebianBusterConfigured
-
-# Target storage for full clone.
-pve_kvm_clone_storage: local-lvm
-
-# Target drive's backing file's data format. Use format=unspecified and full=false for a linked clone.
-# Choices: cloop - cow - qcow - qcow2 (default) - qed - raw - vmdk
-pve_kvm_clone_format: raw
-
-# Target node. Only allowed if the original VM is on shared storage.
-pve_kvm_clone_target: "{{ pve_node }}"
+pve_kvm_clone_full: true  # true as default value to avoid mentioned error in case of omission
 
 # ID of VM to be cloned
 # pve_kvm_clone_vmid: 100
@@ -86,9 +72,26 @@ pve_kvm_clone_target: "{{ pve_node }}"
 # VMID for the clone. If newid is not set, the next available VMID will be fetched from ProxmoxAPI.
 # pve_kvm_clone_newid: 400
 
+# Name of VM to be cloned. If vmid is set with the pve_kvm_clone_vmid variable hereafter, which takes precedence over
+# the hostname, pve_kvm_clone_vm can take arbitrary value but it is required for initiating the clone.
+# pve_kvm_clone_vm: DebianBusterTemplate
+
+# The name of the snapshot to clone (Don't use/define it at the same time as pve_kvm_clone_vm)
+# pve_kvm_clone_snapname: DebianBusterConfigured
+
+# Target storage for full clone.
+# pve_kvm_clone_storage: local-lvm
+
+# Target drive's backing file's data format. Use format=unspecified and full=false for a linked clone.
+# Choices: cloop - cow - qcow - qcow2 (default) - qed - raw - vmdk
+# pve_kvm_clone_format: raw
+
+# Target node. Only allowed if the original VM is on shared storage.
+# pve_kvm_clone_target: "{{ pve_node }}"
+
 
 #####################################################
-#### To create a KVM by cloning a pre-existing one
+#### To create a KVM from scratch
 ###
 
 ###
@@ -96,76 +99,76 @@ pve_kvm_clone_target: "{{ pve_node }}"
 ###
 
 # Specifies whether a VM will be started during system bootup.
-pve_kvm_onboot: no    # Optional
+# pve_onboot: no    # Optional
 
 # Specify the description for the VM. Only used on the configuration web interface. This is saved as comment inside the configuration file.
-pve_kvm_description: LAMP Server created with Ansible    # Optional
+# pve_kvm_description: LAMP Server created with Ansible    # Optional
 
 # Enable/disable KVM hardware virtualization.
-pve_kvm_hardware_virtualization: yes
+# pve_kvm_hardware_virtualization: yes
 
 # Specifies guest operating system. This is used to enable special optimization/features for specific operating systems.
-pve_kvm_ostype: l26   # Optional. Choices: l24 - l26 (default) - other - wxp - w2k - w2k3 - w2k8 - wvista - win7 - win8 - solaris
+# pve_kvm_ostype: l26   # Optional. Choices: l24 - l26 (default) - other - wxp - w2k - w2k3 - w2k8 - wvista - win7 - win8 - solaris
 
 # Sets the number of CPU sockets. (1 - N).
-pve_kvm_sockets: 1    # Optional
+# pve_kvm_sockets: 1    # Optional
 
 # Specify number of cores per socket.
-pve_kvm_cores: 1    # Optional
+# pve_kvm_cores: 1    # Optional
 
 # Specify CPU weight for a VM. You can disable fair-scheduler configuration by setting this to 0
-pve_kvm_cpuunits: 1000    # Optional
+# pve_kvm_cpuunits: 1024    # Optional
 
 # Specify if CPU usage will be limited. Value 0 indicates no CPU limit. If the computer has 2 CPUs, it has total of '2' CPU time
-pve_kvm_cpulimit: 0    # Optional
+# pve_kvm_cpulimit: 0    # Optional
 
 # Memory size in MB for instance.
-pve_kvm_memory: 512    # Optional
+# pve_kvm_memory: 512    # Optional
 
 # Specify the amount of RAM for the VM in MB. Using zero disables the balloon driver.
-pve_kvm_balloon: 0    # Optional
+# pve_kvm_balloon: 0    # Optional
 
 # Amount of memory shares for auto-ballooning. (0 - 50000). The larger the number is, the more memory this VM gets.
 # Using 0 disables auto-ballooning, this means no limit. The number is relative to weights of all other running VMs.
-pve_kvm_shares: 0    # Optional
+# pve_kvm_shares: 0    # Optional
 
 # Select VGA type. If you want to use high resolution modes (>= 1280x1024x16) then you should use option 'std' or 'vmware'.
-pve_kvm_vga: std      # Optioanl. Choices: std (default) - cirrus - vmware - qxl - serial0 - serial1 - serial2 - serial3 - qxl2 - qxl3 - qxl4
+# pve_kvm_vga: std      # Optioanl. Choices: std (default) - cirrus - vmware - qxl - serial0 - serial1 - serial2 - serial3 - qxl2 - qxl3 - qxl4
 
 # Custom structure to define the VM network interfaces in a more human-readable way
-pve_kvm_net_interfaces:
-- id: net0
-  model: virtio                 # Optional. Available models: virtio - e1000 - rtl8139 - vmxnet3
-  hwaddr: 46:70:B7:26:87:4F     # Optional. If not indicated, Proxmox will assign one automatically.
-  bridge: vmbr0
-  firewall: true                # Optional
-  disconnect: true              # Optional
-  multiqueue: 2                 # Optional
-  rate_limit: 250               # Optional (In MB/s)
-  vlan_tag: 400                 # Optional
+pve_kvm_net_interfaces: []
+# - id: net0
+#   model: virtio                 # Optional. Available models: virtio - e1000 - rtl8139 - vmxnet3
+#   hwaddr: 46:70:B7:26:87:4F     # Optional. If not indicated, Proxmox will assign one automatically.
+#   bridge: vmbr0
+#   firewall: true                # Optional
+#   disconnect: true              # Optional
+#   multiqueue: 2                 # Optional
+#   rate_limit: 250               # Optional (In MB/s)
+#   vlan_tag: 400                 # Optional
 
-- id: net1
-  bridge: vmbr0
+# - id: net1
+#   bridge: vmbr0
 
 # Custom structure to define the VM hard disks in a more human-readable way
-pve_kvm_hard_disks:
-- id: 0                         #  0 ≤ n ≤ 15
-  bus: virtio                   # Optional. Available buses: virtio (default) - ide - sata - scsi
-  storage: local-lvm
-  size: 32
-  format: raw                   # Optional. Available formats: qcow2 - raw (default) - subvol
-  backup: true                  # Optional
-  skip_replication: false       # Optional
-  cache: none                   # Optional. Available types: none (default) - directsync - writethrough - writeback - unsafe
-  io_thread: false              # Optional
-  ssd_emulation: false          # Optional
+pve_kvm_hard_disks: []
+# - id: 0                         #  0 ≤ n ≤ 15
+#   bus: virtio                   # Optional. Available buses: virtio (default) - ide - sata - scsi
+#   storage: local-lvm
+#   size: 32
+#   format: raw                   # Optional. Available formats: qcow2 - raw (default) - subvol
+#   backup: true                  # Optional
+#   skip_replication: false       # Optional
+#   cache: none                   # Optional. Available types: none (default) - directsync - writethrough - writeback - unsafe
+#   io_thread: false              # Optional
+#   ssd_emulation: false          # Optional
 
-- id: 1
-  bus: sata
-  storage: local-lvm
-  size: 16
-  ssd_emulation: true
-  backup: false
+# - id: 1
+#   bus: sata
+#   storage: local-lvm
+#   size: 16
+#   ssd_emulation: true
+#   backup: false
 
 # A hash/dictionary of volume used as IDE hard disk or CD-ROM
 # pve_kvm_ide:    # Optional
