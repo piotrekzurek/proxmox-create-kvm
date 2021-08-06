@@ -15,13 +15,13 @@ Installation
 ------------
 
 ```shell
-$ ansible-galaxy install udelarinterior.proxmox_create_lxc
+$ ansible-galaxy install udelarinterior.proxmox_create_kvm
 ```
 
 To be able to update later and eventually to modify it, prefer using `requirements.yml` with the git source:
 
 ```yaml
-- name: udelarinterior.proxmox_create_kmv
+- name: udelarinterior.proxmox_create_kvm
   src: https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm.git
   ```
 And then download it with `ansible-galaxy`:
@@ -41,7 +41,7 @@ Role Variables
 
 The `defaults` variables define the VM parameters. To be specified by host under `host_vars/host_fqdn/vars` and eventually encrypted in `host_vars/host_fqdn/vault`
 
-New interface introduced in v2.0.0 is maintained, with role's variables defined in the `pve_*` namespace when they are shared between several Proxmox roles, and in the `pve_kvm_*` namespace when they are specific to th present one. The role is no longer backward's compatible with [v1.X.Y previous interface](https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm/blob/v1.2.0/README.md#role-variables).
+New interface introduced in v2.0.0 is maintained, with role's variables defined in the `pve_*` namespace when they are shared between [several Proxmox roles](https://github.com/UdelaRInterior?q=proxmox), and in the `pve_kvm_*` namespace when they are specific to th present one. The role is no longer backward's compatible with [v1.X.Y previous interface](https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm/blob/v1.2.0/README.md#role-variables).
 
 ```yaml
 #########################################################
@@ -93,7 +93,7 @@ pve_kvm_started_after_provision: false # It will ensure that the VM is turned on
 pve_kvm_clone_from_existing: false
 
 # If yes, the VM will be updated with new value. Cause of the operations of the API and security reasons, the update of the
-# following parameters was disabled: net, virtio, ide, sata, scsi. Per example updating net update the MAC address and virtio
+# following parameters was disabled: net, virtio, ide, sata, scsi. For example updating net update the MAC address and virtio
 # create always new disk. Update of pool is disabled. It needs an additional API endpoint not covered by this module.
 pve_kvm_update: no
 
@@ -107,7 +107,7 @@ pve_kvm_update: no
 
 # Create a full copy of all disk. This is always done when you clone a normal VM. For VM templates, we try to create a linked clone by default.
 # FALSE: linked clone  -  TRUE: full clone ## See https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm/issues/2
-pve_kvm_clone_full: true
+pve_kvm_clone_full: true  # true as default value to avoid mentioned error in case of omission
 
 # ID of VM to be cloned
 # pve_kvm_clone_vmid: 100
