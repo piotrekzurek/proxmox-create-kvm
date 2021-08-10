@@ -7,7 +7,7 @@
     state: present
   delegate_to: "{{ pve_api_host }}"
 
-#  Verificar si el módulo proxmoxer de python está instalado
+# Verificar si el módulo proxmoxer de python está instalado
 - name: Verify if proxmoxer pip module is installed
   ansible.builtin.pip:
     name: proxmoxer

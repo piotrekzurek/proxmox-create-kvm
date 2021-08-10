@@ -1,4 +1,15 @@
 ---
 # handlers file for ansible-role-proxmox-create-kvm/
 
+# Repintiendo ping cada 3s hasta que la máquina virtual arranque
+# Repeating ping every 3 seconds until the container starts
+- name: pve_kvm wait for SSH connection
+  ansible.builtin.wait_for_connection:
+    delay: 3
+    sleep: 3
+    timeout: "{{ pve_kvm_wait_for_ssh_connection_timeout }}"
+  remote_user: "{{ pve_kvm_wait_for_ssh_connection_remote_user }}"
+  when:
+    - pve_kvm_wait_for_ssh_connection | bool
+
 ...

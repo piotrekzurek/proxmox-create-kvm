@@ -1,11 +1,30 @@
 ---
 # proxmox_create_kvm: creation or clone of a complete virtual machine in a Proxmox VE node
 
+# Asegurarse que se cumplen los requerimientos del módulo community.general.proxmox_kvm
+# Ensure the community.general.proxmox_kvm module requirements are satisfied
 - include_tasks: dependencies.yml
 
+# Subir snippet personalizado de cloud-init al nodo
+- name: Upload custom cloud-init snippet to node
+  ansible.builtin.template:
+    src: "{{ pve_kvm_custom_ci_snippet_template_src }}"
+    dest: "{{ pve_kvm_custom_ci_snippet_dest }}"
+    owner: root
+    group: root
+    mode: '0644'
+  delegate_to: "{{ pve_api_host }}"
+  when:
+    - pve_kvm_custom_ci_snippet is defined
+    - pve_kvm_custom_ci_snippet | length > 0
+
+# Tarea para crear una máquina virtual vacía desde cero
+# Task to create an empty VM from scratch
 - include_tasks: create_kvm.yml
   when: not pve_kvm_clone_from_existing | bool
 
+# Tarea para crear una KVM clonando otra preexistente
+# Task to create a KVM by cloning a pre-existing one
 - include_tasks: clone_kvm.yml
   when: pve_kvm_clone_from_existing | bool
 
@@ -24,10 +43,18 @@
     - pve_kvm_clone_newid is not defined
     - pve_kvm_virtual_created is succeeded
 
-# Establecer variable con el VMID correspondiente para la máquina virtual en caso de que no haya sido definido
-- name: Set variable with the corresponding VMID for the virtual machine in case it has not been defined
+# Establecer variable con el ID correspondiente de la máquina virtual creada
+- name: Set variable with the corresponding ID of the created virtual machine
   ansible.builtin.set_fact:
-    pve_kvm_inferred_vmid: "{{ pve_kvm_clone_newid if(pve_kvm_clone_newid is defined and pve_kvm_clone_from_existing) else ( pve_kvm_vmid if (pve_kvm_vmid is defined) else pve_kvm_extracted_vmid.stdout ) }}"
+    pve_kvm_inferred_vmid: "{{ pve_kvm_clone_newid if(pve_kvm_clone_newid is defined and pve_kvm_clone_from_existing) else ( pve_kvm_vmid if(pve_kvm_vmid is defined) else pve_kvm_extracted_vmid.stdout ) }}"
+
+# Tareas a ejecutar una sola vez para reconfigurar recursos de una VM recién clonada
+# One-time tasks to configure resources of a newly cloned VM
+- include_tasks: post_clone_kvm_configuration.yml
+  when:
+    - pve_kvm_virtual_created is changed  # Controls that the tasks run only once immediately after cloning the VM
+    - pve_kvm_clone_from_existing | bool
+    - pve_kvm_clone_post_configure | bool
 
 # Asegurarse de que la máquina virtual esté encendida
 - name: Ensure the virtual machine is turned on
@@ -41,6 +68,7 @@
     vmid: "{{ pve_kvm_inferred_vmid }}"
     state: started
   delegate_to: "{{ pve_api_host }}"
+  notify: pve_kvm wait for SSH connection
   when: pve_kvm_started_after_provision | bool
 
 ...
