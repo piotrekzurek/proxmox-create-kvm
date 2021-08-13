@@ -101,11 +101,17 @@ pve_kvm_clone_full: true  # true as default value to avoid mentioned error in ca
 # Specifies whether a VM will be started during system bootup.
 # pve_onboot: no    # Optional
 
+# Specify the boot order: a = floppy, c = hard disk, d = CD-ROM, n = network
+# pve_kvm_boot: cnd  # Optional
+
+# Identifier of the hard drive to boot from
+# pve_kvm_bootdisk: scsi0
+
 # Specify the description for the VM. Only used on the configuration web interface. This is saved as comment inside the configuration file.
 # pve_kvm_description: LAMP Server created with Ansible    # Optional
 
 # Enable/disable KVM hardware virtualization.
-# pve_kvm_hardware_virtualization: yes
+# pve_kvm_hardware_virtualization: yes  # Optional
 
 # Specifies guest operating system. This is used to enable special optimization/features for specific operating systems.
 # pve_kvm_ostype: l26   # Optional. Choices: l24 - l26 (default) - other - wxp - w2k - w2k3 - w2k8 - wvista - win7 - win8 - solaris
