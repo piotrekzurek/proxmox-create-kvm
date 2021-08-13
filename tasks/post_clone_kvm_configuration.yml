@@ -31,6 +31,7 @@
     args: "{{ pve_kvm_args | default(omit) }}"
     autostart: "{{ pve_kvm_autostart | default(omit) }}"
     bios: "{{ pve_kvm_bios | default(omit) }}"
+    boot: "{{ pve_kvm_boot | default(omit) }}"
     bootdisk: "{{ pve_kvm_bootdisk | default(omit) }}"
     citype: "{{ pve_kvm_citype | default(omit) }}"
     cicustom: "{{ pve_kvm_cicustom | default(omit) }}"
