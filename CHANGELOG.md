@@ -1,12 +1,13 @@
 # Change Log
 
-## [v5.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm/tree/v5.0.0)
+## [v4.1.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm/tree/v4.1.0)
 
 Added the ability to use a seamless flow to fully provision a virtual machine from a template that integrates cloud-init.
 
 To set the cloud-init metadata, both the native parameters handled by Proxmox and a custom snippet can be used.
 
 In addition, it's now possible to reallocate/update the hardware resources assigned to a cloned VM (with the exception of net, virtio, ide, sata and scsi due to the limitations of the proxmox_kmv module) and increase the size of its disks.
+
 ## [v4.0.1](https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm/tree/v4.0.1)
 
 * Minor fixes in README
