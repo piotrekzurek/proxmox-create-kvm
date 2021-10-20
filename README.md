@@ -73,10 +73,10 @@ pve_api_password: PaSsWd_f0r-AuToMaTi0nS    # Optional if token authentication i
 # pve_api_token_secret: 0b029a23-1ca3-a93f-8d90-5a4c9d064199      # Optional if user-password based authentication is used
 
 # Validate the node's certificates when creating the virtual machine
-pve_validate_certs: no    # Optional.
+# pve_validate_certs: no    # Optional.
 
 # Timeout (in seconds) for operations, both clone and create. (Cloning can take a while)
-pve_kvm_timeout: 500
+# pve_kvm_timeout: 500
 
 
 #####################################################
@@ -95,7 +95,7 @@ pve_kvm_clone_from_existing: false
 # If yes, the VM will be updated with new value. Cause of the operations of the API and security reasons, the update of the
 # following parameters was disabled: net, virtio, ide, sata, scsi. For example updating net update the MAC address and virtio
 # create always new disk. Update of pool is disabled. It needs an additional API endpoint not covered by this module.
-pve_kvm_update: no
+# pve_kvm_update: no
 
 
 #####################################################
@@ -117,20 +117,20 @@ pve_kvm_clone_full: true  # true as default value to avoid mentioned error in ca
 
 # Name of VM to be cloned. If vmid is set with the pve_kvm_clone_vmid variable hereafter, which takes precedence over
 # the hostname, pve_kvm_clone_vm can take arbitrary value but it is required for initiating the clone.
-pve_kvm_clone_vm: DebianBusterTemplate
+# pve_kvm_clone_vm: DebianBusterTemplate
 
 # The name of the snapshot to clone (Don't use/define it at the same time as pve_kvm_clone_vm)
 # pve_kvm_clone_snapname: DebianBusterConfigured
 
 # Target storage for full clone.
-pve_kvm_clone_storage: local-lvm
+# pve_kvm_clone_storage: local-lvm
 
 # Target drive's backing file's data format. Use format=unspecified and full=false for a linked clone.
 # Choices: cloop - cow - qcow - qcow2 (default) - qed - raw - vmdk
-pve_kvm_clone_format: raw
+# pve_kvm_clone_format: raw
 
 # Target node. Only allowed if the original VM is on shared storage.
-pve_kvm_clone_target: "{{ pve_node }}"
+# pve_kvm_clone_target: "{{ pve_node }}"
 
 
 #####################################################
@@ -142,49 +142,49 @@ pve_kvm_clone_target: "{{ pve_node }}"
 ###
 
 # Specifies whether a VM will be started during system bootup.
-pve_onboot: no    # Optional
+# pve_onboot: no    # Optional
 
 # Specify the boot order: a = floppy, c = hard disk, d = CD-ROM, n = network
-pve_kvm_boot: cnd  # Optional
+# pve_kvm_boot: cnd  # Optional
 
 # Identifier of the hard drive to boot from
-pve_kvm_bootdisk: scsi0  # Optional
+# pve_kvm_bootdisk: scsi0  # Optional
 
 # Specify the description for the VM. Only used on the configuration web interface. This is saved as comment inside the configuration file.
-pve_kvm_description: LAMP Server created with Ansible    # Optional
+# pve_kvm_description: LAMP Server created with Ansible    # Optional
 
 # Enable/disable KVM hardware virtualization.
-pve_kvm_hardware_virtualization: yes  # Optional
+# pve_kvm_hardware_virtualization: yes  # Optional
 
 # Specifies guest operating system. This is used to enable special optimization/features for specific operating systems.
-pve_kvm_ostype: l26   # Optional. Choices: l24 - l26 (default) - other - wxp - w2k - w2k3 - w2k8 - wvista - win7 - win8 - solaris
+# pve_kvm_ostype: l26   # Optional. Choices: l24 - l26 (default) - other - wxp - w2k - w2k3 - w2k8 - wvista - win7 - win8 - solaris
 
 # Sets the number of CPU sockets. (1 - N).
-pve_kvm_sockets: 1    # Optional
+# pve_kvm_sockets: 1    # Optional
 
 # Specify number of cores per socket.
-pve_kvm_cores: 1    # Optional
+# pve_kvm_cores: 1    # Optional
 
 # Specify CPU weight for a VM. You can disable fair-scheduler configuration by setting this to 0
-pve_kvm_cpuunits: 1000    # Optional
+# pve_kvm_cpuunits: 1024    # Optional
 
 # Specify if CPU usage will be limited. Value 0 indicates no CPU limit. If the computer has 2 CPUs, it has total of '2' CPU time
-pve_kvm_cpulimit: 0    # Optional
+# pve_kvm_cpulimit: 0    # Optional
 
 # Memory size in MB for instance.
-pve_kvm_memory: 512    # Optional
+# pve_kvm_memory: 512    # Optional
 
 # Specify the amount of RAM for the VM in MB. Using zero disables the balloon driver.
-pve_kvm_balloon: 0    # Optional
+# pve_kvm_balloon: 0    # Optional
 
 # Amount of memory shares for auto-ballooning. (0 - 50000). The larger the number is, the more memory this VM gets.
 # Using 0 disables auto-ballooning, this means no limit. The number is relative to weights of all other running VMs.
-pve_kvm_shares: 0    # Optional
+# pve_kvm_shares: 0    # Optional
 
 # Select VGA type. If you want to use high resolution modes (>= 1280x1024x16) then you should use option 'std' or 'vmware'.
-pve_kvm_vga: std      # Optioanl. Choices: std (default) - cirrus - vmware - qxl - serial0 - serial1 - serial2 - serial3 - qxl2 - qxl3 - qxl4
+# pve_kvm_vga: std      # Optioanl. Choices: std (default) - cirrus - vmware - qxl - serial0 - serial1 - serial2 - serial3 - qxl2 - qxl3 - qxl4
 
-# Custom structure to define the VM network interfaces in a more human-readable way
+# Custom structure to define the VM network interfaces in a more human-readable way (these are examples, default is empty)
 pve_kvm_net_interfaces:
 - id: net0
   model: virtio                 # Optional. Available models: virtio - e1000 - rtl8139 - vmxnet3
@@ -199,7 +199,7 @@ pve_kvm_net_interfaces:
 - id: net1
   bridge: vmbr0
 
-# Custom structure to define the VM hard disks in a more human-readable way
+# Custom structure to define the VM hard disks in a more human-readable way (these are examples, default is empty)
 pve_kvm_hard_disks:
 - id: 0                         #  0 ≤ n ≤ 15
   bus: virtio                   # Optional. Available buses: virtio (default) - ide - sata - scsi

@@ -1,5 +1,9 @@
 # Change Log
 
+## [v4.0.1](https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm/tree/v4.0.1)
+
+* Minor fixes in README
+
 ## [v4.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm/tree/v4.0.0)
 
 Updated to Ansible v2.10 (use of collections) and several improvements:
