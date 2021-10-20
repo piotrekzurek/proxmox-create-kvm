@@ -13,7 +13,7 @@
     proxmox_default_behavior: "{{ pve_kvm_proxmox_default_behavior | default('compatibility') }}"
     validate_certs: "{{ pve_kvm_validate_certs | default(omit) }}"
     name: "{{ pve_hostname }}"
-    vmid: "{{ pve_kvm_vmid | default(omit) }}"
+    vmid: "{{ pve_kvm_inferred_vmid | default(omit) }}"
     timeout: "{{ pve_kvm_timeout | default(omit) }}"
     description: "{{ pve_kvm_description | default(omit) }}"
     kvm: "{{ pve_kvm_hardware_virtualization | default(omit) }}"
