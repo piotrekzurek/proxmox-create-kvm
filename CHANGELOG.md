@@ -1,5 +1,9 @@
 # Change Log
 
+## [v4.1.1](https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm/tree/v4.1.1)
+
+* Installing the `python3-pip` package directly from apt instead of the ambiguous `python-pip`. This change allows the role to run correctly on all Proxmox versions supported (PVE >= 5), since `python3-pip` is available on all of them, but `python-pip` is not on the latest ones.
+
 ## [v4.1.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm/tree/v4.1.0)
 
 Added the ability to use a seamless flow to fully provision a virtual machine from a template that integrates cloud-init.
